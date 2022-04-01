@@ -9,9 +9,8 @@ enum whoWon
 
 class Ball
 {
-private:
-    Point velocity;
 public:
+    Point velocity;
     Point location;
     whoWon checkGameEnd();
     Ball(Point& newLocation, Point& newVelocity);

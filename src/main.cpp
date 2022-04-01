@@ -78,8 +78,15 @@ void listen(bool& finished, std::string& keyboardInput)
     finished = true;
 }
 
-void handleUserInput(const std::string& inputs)
+void handleUserInput(const std::string& inputs, Paddle& leftPaddle, Paddle& rightPaddle)
 {
     // modify the velocities of paddles
-    
+    for (int i = 0; i < 2; i++)
+    {
+        if (inputs[i] == 'w')
+            leftPaddle.velocity.y = 1;
+        else if (inputs[i] == 's')
+            leftPaddle.velocity.y = -1;
+        else if (inputs[i] == '')
+    }
 }
