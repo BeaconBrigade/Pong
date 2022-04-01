@@ -11,15 +11,34 @@ const char* SQUARE = "█";
 
 void update(char picture[HEIGHT][WIDTH], bool init);
 void draw(char picture[HEIGHT][WIDTH]);
+void listen(bool& finished, std::string& keyboardInput);
+void handleUserInput(const std::string& inputs);
+
 
 int main()
 {
-    bool finished = false, running = true;
+    bool finished = true, running = true;
     char picture[HEIGHT][WIDTH];
+    std::string keyboardInput;
+
     update(picture, true);
 
+    // game loop
     while (running)
     {
+        if (finished)
+        {
+            std::thread userInput(listen, std::ref(finished), std::ref(keyboardInput));
+
+            handleUserInput(keyboardInput);
+
+            userInput.join();
+            finished = false;
+            keyboardInput = "";
+        }
+
+
+
         draw(picture);
     }
 }
@@ -53,11 +72,14 @@ void draw(char picture[HEIGHT][WIDTH])
     }
 }
 
-char listen(bool& finished)
+void listen(bool& finished, std::string& keyboardInput)
 {
-    char x;
-    std::cin >> x;
-
+    // read keyboard input \\
     finished = true;
-    return x;
+}
+
+void handleUserInput(const std::string& inputs)
+{
+    // modify the velocities of paddles
+    
 }
