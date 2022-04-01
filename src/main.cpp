@@ -12,17 +12,17 @@ const char* SQUARE = "█";
 
 void update(char picture[HEIGHT][WIDTH], bool init);
 void draw(char picture[HEIGHT][WIDTH]);
-void listen(bool& finished, std::string& keyboardInput, int& length);
+void listen(std::string& keyboardInput);
 void handleUserInput(const std::string& inputs, int& length, Paddle& left, Paddle& right);
 
 void fixTerminalOnExit(int signal);
 
 int main()
 {
-    bool finished = true, running = true;
+    bool running = true;
     char picture[HEIGHT][WIDTH];
-    std::string keyboardInput;
-    int inputLength;
+    std::string keyboardInput = "////";
+    int inputLength, framePassed = 0;
     
     // fix terminal on keyboard interupt
     std::signal(SIGINT, fixTerminalOnExit);
@@ -30,25 +30,22 @@ int main()
     // initiate paddles and picture
     Paddle leftPaddle(Point(0, 4)), rightPaddle(Point(19, 4));
     update(picture, true);
+    std::thread userInput(listen, std::ref(keyboardInput));
 
     // game loop
     while (running)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        // user input
-        if (finished)
-        {
-            std::thread userInput(listen, std::ref(finished), std::ref(keyboardInput), std::ref(inputLength));
-
-            handleUserInput(keyboardInput, inputLength, leftPaddle, rightPaddle);
-
-            userInput.join();
-            finished = false;
-            keyboardInput = "";
-        }
-
+        framePassed++;
+        std::cout << "new" << framePassed << std::endl;
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        
+        handleUserInput(keyboardInput, inputLength, leftPaddle, rightPaddle);
         draw(picture);
+
     }
+
+    // closing
+    system("stty cooked");
 }
 
 void update(char picture[HEIGHT][WIDTH], bool init = false)
@@ -59,7 +56,9 @@ void update(char picture[HEIGHT][WIDTH], bool init = false)
         for (int i = 0; i < HEIGHT; i++)
         {
             for (int j = 0; j < WIDTH; j++)
+            {
                 picture[i][j] = ' ';
+            }
         }
     }
 
@@ -72,18 +71,31 @@ void draw(char picture[HEIGHT][WIDTH])
     system("clear");
 
     // draw everything onto the screen
+    std::cout << "======================" << std::endl;
     for (int i = 0; i < HEIGHT; i++)
     {
+        std::cout << '|';
         for (int j = 0; j < WIDTH; j++)
             std::cout << picture[i][j];
+        std::cout << '|';
         std::cout << std::endl;
     }
+    std::cout << "======================" << std::endl;
 }
 
-void listen(bool& finished, std::string& keyboardInput, int& length)
-{
-    // read keyboard input \\
-    finished = true;
+void listen(std::string& keyboardInput)
+{   
+    system("stty raw");
+
+    for (int i = 0; true; i++)
+    {
+        if (i == 4)
+        {
+            i = 0;
+            keyboardInput = "////";
+        }
+        keyboardInput[i] = getchar();
+    }
 }
 
 void handleUserInput(const std::string& inputs, int& length, Paddle& leftPaddle, Paddle& rightPaddle)
@@ -99,13 +111,16 @@ void handleUserInput(const std::string& inputs, int& length, Paddle& leftPaddle,
             case 's' :
                 leftPaddle.velocity.y = -1;
                 break;
-            case 'u' :
+            case 'u' : // fill with up arrow key
                 rightPaddle.velocity.y = 1;
                 break;
-            case 'd' :
+            case 'd' : // fill with down arrow key
                 rightPaddle.velocity.y = -1;
                 break;
+            case 'c' :
+                fixTerminalOnExit(0);
         }
+        std::cout << "User inputed: " << inputs[i] << std::endl;
     }
 }
 

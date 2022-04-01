@@ -1,4 +1,4 @@
-#include "ball.h"
+ #include "ball.h"
 #include "paddle.h"
 
 Ball::Ball(Point& newPosition, Point& newVelocity)
