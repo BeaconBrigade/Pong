@@ -10,6 +10,7 @@
 		"args": [
 		  "-std=c++17",
 		  "-stdlib=libc++",
+          "-pthread",
 		  "-g",
 		  "${workspaceFolder}/src/main.cpp",
 		  "${workspaceFolder}/src/ball.cpp",
