@@ -1,7 +1,6 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include <csignal>
 #include <string>
 #include "paddle.h"
 #include "ball.h"
@@ -20,9 +19,6 @@ int main()
     char picture[HEIGHT][WIDTH];
     std::string keyboardInput = "////";
     int inputLength, framePassed = 0;
-    
-    // fix terminal on keyboard interupt
-    std::signal(SIGINT, fixTerminalOnExit);
 
     // initiate paddles and picture
     Paddle leftPaddle(Point(0, 4)), rightPaddle(Point(19, 4));
@@ -34,7 +30,7 @@ int main()
     {
         framePassed++;
         std::cout << "frame " << framePassed << std::endl;
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
         
         handleUserInput(keyboardInput, inputLength, leftPaddle, rightPaddle);
         draw(picture);
@@ -67,6 +63,7 @@ void draw(char picture[HEIGHT][WIDTH])
     // clear console
     system("clear");
     system("stty cooked");
+    printf("\e[?25l");
 
     // draw everything onto the screen
     for (int i = 0; i < WIDTH + 2; i++)
@@ -79,7 +76,7 @@ void draw(char picture[HEIGHT][WIDTH])
             std::cout << picture[i][j];
         std::cout << "|\n";
     }
-    for (int i = 0; i < WIDTH; i++)
+    for (int i = 0; i < WIDTH + 2; i++)
         std::cout << '=';
     std::cout << '\n';
 
@@ -124,7 +121,6 @@ void handleUserInput(const std::string& inputs, int& length, Paddle& leftPaddle,
                 fixTerminalOnExit(0);
                 break;
         }
-        std::cout << "User inputed: " << inputs[i] << std::endl;
     }
 }
 
@@ -132,5 +128,6 @@ void fixTerminalOnExit(int signal)
 {
     std::cout << "Program exiting! :)" << std::endl;
     system("stty cooked");
+    printf("\e[?25h");
     exit(0);
 }
