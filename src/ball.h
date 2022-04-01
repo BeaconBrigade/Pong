@@ -10,12 +10,11 @@ enum whoWon
 class Ball
 {
 private:
-    Point location;
     Point velocity;
 public:
+    Point location;
     whoWon checkGameEnd();
     Ball(Point& newLocation, Point& newVelocity);
     void move();
-    bool collision(Paddle& left, Paddle& right);
-
+    void collision(const Paddle& left, const Paddle& right);
 };

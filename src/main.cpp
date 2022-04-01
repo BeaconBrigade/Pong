@@ -1,11 +1,13 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <string>
 #include "paddle.h"
 #include "ball.h"
 
 const int WIDTH = 20;
 const int HEIGHT = 8;
+const char* SQUARE = "█";
 
 void update(char picture[HEIGHT][WIDTH], bool init);
 void draw(char picture[HEIGHT][WIDTH]);

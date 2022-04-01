@@ -4,8 +4,9 @@
 class Paddle
 {
 private:
-    Point location;
+    Point velocity;
 public:
-    Paddle(Point& location);
+    Point location;
+    Paddle(Point location);
     void move(char direction);
 };

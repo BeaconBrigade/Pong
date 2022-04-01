@@ -1,0 +1,31 @@
+{
+	// See https://go.microsoft.com/fwlink/?LinkId=733558
+	// for the documentation about the tasks.json format
+	"version": "2.0.0",
+	"tasks": [
+	  {
+		"type": "shell",
+		"label": "clang++ 13.0.0 build active file",
+		"command": "/usr/bin/clang++",
+		"args": [
+		  "-std=c++17",
+		  "-stdlib=libc++",
+		  "-g",
+		  "${workspaceFolder}/src/main.cpp",
+		  "${workspaceFolder}/src/ball.cpp",
+		  "${workspaceFolder}/src/paddle.cpp",
+		  "${workspaceFolder}/src/point.cpp",
+		  "-o",
+		  "${workspaceFolder}/asciiGame.out"
+		],
+		"options": {
+		  "cwd": "${workspaceFolder}"
+		},
+		"problemMatcher": ["$gcc"],
+		"group": {
+		  "kind": "build",
+		  "isDefault": true
+		}
+	  }
+	]
+  }

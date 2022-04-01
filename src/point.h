@@ -8,6 +8,8 @@ public:
     Point operator +(const Point&);
     void operator =(const Point&);
     void operator +=(const Point&);
+    bool operator ==(const Point&);
+    void operator *=(const Point&);
 
     Point(int x, int y);
     Point();

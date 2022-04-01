@@ -23,6 +23,17 @@ Point::Point(int newX, int newY)
     Point::y = newY;
 }
 
+bool Point::operator ==(const Point& a)
+{
+    return (Point::x == a.x && Point::y == a.y);
+}
+
+void Point::operator *=(const Point& a)
+{
+    Point::x *= a.x;
+    Point::y *= a.y;
+}
+
 Point::Point()
 {
     Point::x = 0;
