@@ -5,10 +5,7 @@
 #include <string>
 #include "paddle.h"
 #include "ball.h"
-
-const int WIDTH = 20;
-const int HEIGHT = 8;
-const char* SQUARE = "█";
+#include "point.h"
 
 void update(char picture[HEIGHT][WIDTH], bool init);
 void draw(char picture[HEIGHT][WIDTH]);
@@ -36,7 +33,7 @@ int main()
     while (running)
     {
         framePassed++;
-        std::cout << "new" << framePassed << std::endl;
+        std::cout << "frame " << framePassed << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         
         handleUserInput(keyboardInput, inputLength, leftPaddle, rightPaddle);
@@ -69,18 +66,24 @@ void draw(char picture[HEIGHT][WIDTH])
 {
     // clear console
     system("clear");
+    system("stty cooked");
 
     // draw everything onto the screen
-    std::cout << "======================" << std::endl;
+    for (int i = 0; i < WIDTH + 2; i++)
+        std::cout << '=';
+    std::cout << '\n';
     for (int i = 0; i < HEIGHT; i++)
     {
         std::cout << '|';
         for (int j = 0; j < WIDTH; j++)
             std::cout << picture[i][j];
-        std::cout << '|';
-        std::cout << std::endl;
+        std::cout << "|\n";
     }
-    std::cout << "======================" << std::endl;
+    for (int i = 0; i < WIDTH; i++)
+        std::cout << '=';
+    std::cout << '\n';
+
+    system("stty raw");
 }
 
 void listen(std::string& keyboardInput)
@@ -119,6 +122,7 @@ void handleUserInput(const std::string& inputs, int& length, Paddle& leftPaddle,
                 break;
             case 'c' :
                 fixTerminalOnExit(0);
+                break;
         }
         std::cout << "User inputed: " << inputs[i] << std::endl;
     }

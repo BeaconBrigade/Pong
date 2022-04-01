@@ -1,4 +1,4 @@
- #include "ball.h"
+#include "ball.h"
 #include "paddle.h"
 
 Ball::Ball(Point& newPosition, Point& newVelocity)
@@ -11,7 +11,7 @@ whoWon Ball::checkGameEnd()
 {
     if (Ball::location.x == 0)
         return righWin;
-    else if (Ball::location.x == 19)
+    else if (Ball::location.x == WIDTH - 1)
         return leftWin;
     return noWin;
 }
@@ -25,7 +25,7 @@ void Ball::collision(const Paddle& left, const Paddle& right)
     }
 
     // top or bottom collision
-    if (Ball::location.y == 0 || Ball::location.y == 7)
+    if (Ball::location.y == 0 || Ball::location.y == HEIGHT)
     {
         Ball::velocity *= Point(1, -1);
     }
