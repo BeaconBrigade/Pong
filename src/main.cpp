@@ -2,91 +2,83 @@
 #include <thread>
 #include <chrono>
 #include <string>
+#include <ncurses.h>
 #include "paddle.h"
 #include "ball.h"
 #include "point.h"
 
-void update(char picture[HEIGHT][WIDTH], bool init);
-void draw(char picture[HEIGHT][WIDTH]);
-void listen(std::string& keyboardInput);
+void update(char picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball);
+void draw(char picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftScore, int rightScore);
+void listen(std::string& keyboardInput, WINDOW* gameWindow);
 void handleUserInput(const std::string& inputs, int& length, Paddle& left, Paddle& right);
-
-void fixTerminalOnExit(int signal);
+WINDOW* createGameWindow(int height, int width);
 
 int main()
 {
     bool running = true;
-    char picture[HEIGHT][WIDTH];
     std::string keyboardInput = "////";
-    int inputLength, framePassed = 0;
+    WINDOW* gameWindow;
+    int inputLength, framePassed = 0, leftScore = 0, rightScore = 0;
+    char picture[HEIGHT][WIDTH];
+    for (int i = 0; i < HEIGHT; i++)
+    {
+        for (int j = 0; j < WIDTH; j++)
+            picture[i][j] = ' ';
+    }
 
-    // initiate paddles and picture
+    // initiate paddles
     Paddle leftPaddle(Point(0, 4)), rightPaddle(Point(19, 4));
-    update(picture, true);
-    std::thread userInput(listen, std::ref(keyboardInput));
+
+    // game window and text window
+    initscr();
+    noecho();
+    gameWindow = createGameWindow(HEIGHT, WIDTH);
+    noecho();
+    keypad(stdscr, true);
+
+    std::thread userInput(listen, std::ref(keyboardInput), std::ref(gameWindow));
 
     // game loop
     while (running)
     {
         framePassed++;
-        std::cout << "frame " << framePassed << std::endl;
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
         
         handleUserInput(keyboardInput, inputLength, leftPaddle, rightPaddle);
-        draw(picture);
+        draw(picture, gameWindow, framePassed, leftScore, rightScore);
 
-    }
-
-    // closing
-    system("stty cooked");
-}
-
-void update(char picture[HEIGHT][WIDTH], bool init = false)
-{
-    // initiate array of space characters
-    if (init)
-    {
-        for (int i = 0; i < HEIGHT; i++)
-        {
-            for (int j = 0; j < WIDTH; j++)
-            {
-                picture[i][j] = ' ';
-            }
-        }
     }
 
 }
 
-
-void draw(char picture[HEIGHT][WIDTH])
+void update(char picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball)
 {
-    // clear console
-    system("clear");
-    system("stty cooked");
-    printf("\e[?25l");
+    
 
-    // draw everything onto the screen
-    for (int i = 0; i < WIDTH + 2; i++)
-        std::cout << '=';
-    std::cout << '\n';
+}
+
+
+void draw(char picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftScore, int rightScore)
+{
+    // draw game window
+    clear();
+    wborder(gameWindow, 0, 0, 0, 0, 0, 0, 0, 0);
+    wmove(gameWindow, 0, 0);
     for (int i = 0; i < HEIGHT; i++)
     {
-        std::cout << '|';
         for (int j = 0; j < WIDTH; j++)
-            std::cout << picture[i][j];
-        std::cout << "|\n";
+            waddch(gameWindow, picture[i][j]);
+        wmove(gameWindow, i + 1, 0);
     }
-    for (int i = 0; i < WIDTH + 2; i++)
-        std::cout << '=';
-    std::cout << '\n';
 
-    system("stty raw");
+    // draw text
+    mvwprintw(gameWindow, HEIGHT -1, 0, "Frames ellapsed: %i -- %i | %i --", frame, leftScore, rightScore);
+
+    wrefresh(gameWindow);
 }
 
-void listen(std::string& keyboardInput)
-{   
-    system("stty raw");
-
+void listen(std::string& keyboardInput, WINDOW* gameWindow)
+{
     for (int i = 0; true; i++)
     {
         if (i == 4)
@@ -94,7 +86,7 @@ void listen(std::string& keyboardInput)
             i = 0;
             keyboardInput = "////";
         }
-        keyboardInput[i] = getchar();
+        keyboardInput[i] = wgetch(gameWindow);
     }
 }
 
@@ -111,23 +103,23 @@ void handleUserInput(const std::string& inputs, int& length, Paddle& leftPaddle,
             case 's' :
                 leftPaddle.velocity.y = -1;
                 break;
-            case 'u' : // fill with up arrow key
+            case KEY_UP : // fill with up arrow key
                 rightPaddle.velocity.y = 1;
                 break;
-            case 'd' : // fill with down arrow key
+            case KEY_DOWN : // fill with down arrow key
                 rightPaddle.velocity.y = -1;
-                break;
-            case 'c' :
-                fixTerminalOnExit(0);
-                break;
         }
     }
 }
 
-void fixTerminalOnExit(int signal)
+WINDOW* createGameWindow(int height, int width)
 {
-    std::cout << "Program exiting! :)" << std::endl;
-    system("stty cooked");
-    printf("\e[?25h");
-    exit(0);
+    WINDOW* localWin = newwin(height + 4, width + 2, 0, 0);
+
+    // create border
+    wborder(localWin, 0, 0, 0, 0, 0, 0, 0, 0);
+
+    wrefresh(localWin);
+
+    return localWin;
 }
