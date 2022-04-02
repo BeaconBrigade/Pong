@@ -46,7 +46,6 @@ int main()
         
         handleUserInput(keyboardInput, inputLength, leftPaddle, rightPaddle);
         draw(picture, gameWindow, framePassed, leftScore, rightScore);
-
     }
 
 }
@@ -62,17 +61,32 @@ void draw(char picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftSc
 {
     // draw game window
     clear();
-    wborder(gameWindow, 0, 0, 0, 0, 0, 0, 0, 0);
-    wmove(gameWindow, 0, 0);
+    
+    // top line of border
+    mvwaddch(gameWindow, 0, 0, ACS_ULCORNER);
+    for (int i = 0; i < WIDTH; i++)
+        waddch(gameWindow, ACS_HLINE);
+    waddch(gameWindow, ACS_URCORNER);
+
+    // print picture
+    wmove(gameWindow, 1, 0);
     for (int i = 0; i < HEIGHT; i++)
     {
+        waddch(gameWindow, ACS_VLINE);
         for (int j = 0; j < WIDTH; j++)
             waddch(gameWindow, picture[i][j]);
-        wmove(gameWindow, i + 1, 0);
+        waddch(gameWindow, ACS_VLINE);
+        wmove(gameWindow, i + 2, 0);
     }
 
+    // draw bottom border
+    waddch(gameWindow, ACS_LLCORNER);
+    for (int i = 0; i < WIDTH; i++)
+        waddch(gameWindow, ACS_HLINE);
+    waddch(gameWindow, ACS_LRCORNER);
+
     // draw text
-    mvwprintw(gameWindow, HEIGHT -1, 0, "Frames ellapsed: %i -- %i | %i --", frame, leftScore, rightScore);
+    mvwprintw(gameWindow, HEIGHT + 2, 0, "Frames: %i -- %i | %i --", frame, leftScore, rightScore);
 
     wrefresh(gameWindow);
 }
@@ -115,9 +129,6 @@ void handleUserInput(const std::string& inputs, int& length, Paddle& leftPaddle,
 WINDOW* createGameWindow(int height, int width)
 {
     WINDOW* localWin = newwin(height + 4, width + 2, 0, 0);
-
-    // create border
-    wborder(localWin, 0, 0, 0, 0, 0, 0, 0, 0);
 
     wrefresh(localWin);
 
