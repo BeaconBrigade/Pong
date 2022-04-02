@@ -7,8 +7,9 @@
 #include "ball.h"
 #include "point.h"
 
-void update(char picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball);
-void draw(char picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftScore, int rightScore);
+void update(char* picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball);
+void draw(char* picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftScore, int rightScore);
+void blankScreen(char* picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball);
 void listen(std::string& keyboardInput, WINDOW* gameWindow);
 void handleUserInput(std::string& inputs, int& length, Paddle& left, Paddle& right);
 WINDOW* createGameWindow(int height, int width);
@@ -19,15 +20,17 @@ int main()
     std::string keyboardInput = "////";
     WINDOW* gameWindow;
     int inputLength, framePassed = 0, leftScore = 0, rightScore = 0;
-    char picture[HEIGHT][WIDTH];
+    char* picture[HEIGHT][WIDTH];
     for (int i = 0; i < HEIGHT; i++)
     {
         for (int j = 0; j < WIDTH; j++)
-            picture[i][j] = ' ';
+            picture[i][j] = (char*)" ";
     }
 
-    // initiate paddles
+    // instantiate game objects
     Paddle leftPaddle(Point(0, 4)), rightPaddle(Point(19, 4));
+    Point pos((int)(WIDTH / 2), (int)(HEIGHT / 2)), vel(1, -1);
+    Ball ball(pos, vel);
 
     // game window and text window
     initscr();
@@ -42,21 +45,53 @@ int main()
     while (running)
     {
         framePassed++;
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        std::this_thread::sleep_for(std::chrono::milliseconds(250));
         
+        blankScreen(picture, leftPaddle, rightPaddle, ball);
         handleUserInput(keyboardInput, inputLength, leftPaddle, rightPaddle);
+        update(picture, leftPaddle, rightPaddle, ball);
         draw(picture, gameWindow, framePassed, leftScore, rightScore);
     }
 
 }
 
-void update(char picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball)
+void blankScreen(char* picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball)
 {
-    
+    // left paddle
+    picture[left.location.y][left.location.x] = (char*)" ";
+    picture[left.location.y + 1][left.location.x] = (char*)" ";
+    picture[left.location.y + 2][left.location.x] = (char*)" ";
 
+    // right paddle
+    picture[right.location.y][right.location.x] = (char*)" ";
+    picture[right.location.y + 1][right.location.x] = (char*)" ";
+    picture[right.location.y + 2][right.location.x] = (char*)" ";
+
+    // ball
+    picture[ball.location.y][ball.location.x] = (char*)" ";
 }
 
-void draw(char picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftScore, int rightScore)
+void update(char* picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball)
+{
+    left.move();
+    right.move();
+    //ball.move();
+
+    // left paddle
+    picture[left.location.y][left.location.x] = (char*)"!";
+    picture[left.location.y + 1][left.location.x] =(char*) "!";
+    picture[left.location.y + 2][left.location.x] = (char*)"!";
+
+    // right paddle
+    picture[right.location.y][right.location.x] = (char*)"!";
+    picture[right.location.y + 1][right.location.x] = (char*)"!";
+    picture[right.location.y + 2][right.location.x] = (char*)"!";
+
+    // ball
+    //picture[ball.location.y][ball.location.x] = (char*)"█";
+}
+
+void draw(char* picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftScore, int rightScore)
 {
     // draw game window
     clear();
@@ -73,7 +108,7 @@ void draw(char picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftSc
     {
         waddch(gameWindow, ACS_VLINE);
         for (int j = 0; j < WIDTH; j++)
-            waddch(gameWindow, picture[i][j]);
+            wprintw(gameWindow, picture[i][j]);
         waddch(gameWindow, ACS_VLINE);
         wmove(gameWindow, i + 2, 0);
     }
@@ -92,6 +127,7 @@ void draw(char picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftSc
 
 void listen(std::string& keyboardInput, WINDOW* gameWindow)
 {
+    int newChar;
     for (int i = 0; true; i++)
     {
         if (i == 4)
@@ -99,30 +135,40 @@ void listen(std::string& keyboardInput, WINDOW* gameWindow)
             i = 0;
             keyboardInput = "////";
         }
-        keyboardInput[i] = wgetch(gameWindow);
+        newChar = wgetch(gameWindow);
+        keyboardInput[i] = newChar;
     }
 }
 
 void handleUserInput(std::string& inputs, int& length, Paddle& leftPaddle, Paddle& rightPaddle)
 {
+    bool leftPressed = false, rightPressed = true;
     // modify the velocities of paddles
     for (int i = 0; i < 2; i++)
     {
         switch (inputs[i])
         {        
             case 'w' :
-                leftPaddle.velocity.y = 1;
+                leftPaddle.velocity.y = -1;
+                leftPressed = true;
                 break;
             case 's' :
-                leftPaddle.velocity.y = -1;
+                leftPaddle.velocity.y = 1;
+                leftPressed = true;
                 break;
             case KEY_UP : // fill with up arrow key
                 rightPaddle.velocity.y = 1;
+                rightPressed = true;
                 break;
             case KEY_DOWN : // fill with down arrow key
                 rightPaddle.velocity.y = -1;
+                rightPressed = true;
         }
     }
+    if (!leftPressed)
+        leftPaddle.velocity = Point(0, 0);
+    if (!rightPressed)
+        rightPaddle.velocity = Point(0, 0);
     inputs = "////";
 }
 

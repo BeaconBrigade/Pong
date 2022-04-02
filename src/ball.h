@@ -12,8 +12,9 @@ class Ball
 public:
     Point velocity;
     Point location;
+public:
     whoWon checkGameEnd();
     Ball(Point& newLocation, Point& newVelocity);
-    void move();
     void collision(const Paddle& left, const Paddle& right);
+    void move();
 };

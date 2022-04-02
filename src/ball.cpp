@@ -25,8 +25,13 @@ void Ball::collision(const Paddle& left, const Paddle& right)
     }
 
     // top or bottom collision
-    if (Ball::location.y == 0 || Ball::location.y == HEIGHT)
+    if (Ball::location.y == 1 || Ball::location.y == HEIGHT - 1)
     {
         Ball::velocity *= Point(1, -1);
     }
+}
+
+void Ball::move()
+{
+    Ball::location += Ball::velocity;
 }
