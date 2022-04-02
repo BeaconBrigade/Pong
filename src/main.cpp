@@ -10,7 +10,7 @@
 void update(char picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball);
 void draw(char picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftScore, int rightScore);
 void listen(std::string& keyboardInput, WINDOW* gameWindow);
-void handleUserInput(const std::string& inputs, int& length, Paddle& left, Paddle& right);
+void handleUserInput(std::string& inputs, int& length, Paddle& left, Paddle& right);
 WINDOW* createGameWindow(int height, int width);
 
 int main()
@@ -55,7 +55,6 @@ void update(char picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball
     
 
 }
-
 
 void draw(char picture[HEIGHT][WIDTH], WINDOW* gameWindow, int frame, int leftScore, int rightScore)
 {
@@ -104,7 +103,7 @@ void listen(std::string& keyboardInput, WINDOW* gameWindow)
     }
 }
 
-void handleUserInput(const std::string& inputs, int& length, Paddle& leftPaddle, Paddle& rightPaddle)
+void handleUserInput(std::string& inputs, int& length, Paddle& leftPaddle, Paddle& rightPaddle)
 {
     // modify the velocities of paddles
     for (int i = 0; i < 2; i++)
@@ -124,6 +123,7 @@ void handleUserInput(const std::string& inputs, int& length, Paddle& leftPaddle,
                 rightPaddle.velocity.y = -1;
         }
     }
+    inputs = "////";
 }
 
 WINDOW* createGameWindow(int height, int width)
