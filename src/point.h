@@ -2,6 +2,8 @@
 
 const int WIDTH = 20;
 const int HEIGHT = 8;
+const int FAKEUP = 123;
+const int FAKEDOWN = 125;
 
 struct Point
 {
