@@ -16,7 +16,7 @@
                 "${workspaceFolder}/src/paddle.cpp",
                 "${workspaceFolder}/src/point.cpp",
                 "-o",
-                "${workspaceFolder}/asciiGame.out"
+                "${workspaceFolder}/bin/macAsciiGame.out"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
