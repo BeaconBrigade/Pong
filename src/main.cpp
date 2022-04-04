@@ -7,9 +7,9 @@
 #include "ball.h"
 #include "point.h"
 
-void update(char* picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball);
-void draw(char* picture[HEIGHT][WIDTH], WINDOW* gameWindow, int leftScore, int rightScore);
-void blankScreen(char* picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball);
+void update(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball, int& leftScore, int& rightScore);
+void draw(chtype picture[HEIGHT][WIDTH], WINDOW* gameWindow, int leftScore, int rightScore);
+void blankScreen(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball);
 void listen(std::string& keyboardInput, WINDOW* gameWindow, int& length);
 void handleUserInput(std::string inputs, int& length, Paddle& left, Paddle& right);
 WINDOW* createGameWindow(int height, int width);
@@ -20,15 +20,15 @@ int main()
     std::string keyboardInput = "////";
     WINDOW* gameWindow;
     int inputLength = 4, framePassed = 0, leftScore = 0, rightScore = 0;
-    char* picture[HEIGHT][WIDTH];
+    chtype picture[HEIGHT][WIDTH];
     for (int i = 0; i < HEIGHT; i++)
     {
         for (int j = 0; j < WIDTH; j++)
-            picture[i][j] = (char*)" ";
+            picture[i][j] = ' ';
     }
 
     // instantiate game objects
-    Paddle leftPaddle(Point(0, 4)), rightPaddle(Point(19, 4));
+    Paddle leftPaddle(Point(0, HEIGHT / 2)), rightPaddle(Point(WIDTH - 1, HEIGHT / 2));
     Point pos((int)(WIDTH / 2), (int)(HEIGHT / 2)), vel(1, -1);
     Ball ball(pos, vel);
 
@@ -50,49 +50,50 @@ int main()
         blankScreen(picture, leftPaddle, rightPaddle, ball);
         handleUserInput(keyboardInput, inputLength, leftPaddle, rightPaddle);
         keyboardInput = "////";
-        update(picture, leftPaddle, rightPaddle, ball);
+        update(picture, leftPaddle, rightPaddle, ball, leftScore, rightScore);
         draw(picture, gameWindow, leftScore, rightScore);
     }
 
 }
 
-void blankScreen(char* picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball)
+void blankScreen(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball)
 {
     // left paddle
-    picture[left.location.y][left.location.x] = (char*)" ";
-    picture[left.location.y + 1][left.location.x] = (char*)" ";
-    picture[left.location.y + 2][left.location.x] = (char*)" ";
+    picture[left.location.y][left.location.x] = ' ';
+    picture[left.location.y + 1][left.location.x] = ' ';
+    picture[left.location.y + 2][left.location.x] = ' ';
 
     // right paddle
-    picture[right.location.y][right.location.x] = (char*)" ";
-    picture[right.location.y + 1][right.location.x] = (char*)" ";
-    picture[right.location.y + 2][right.location.x] = (char*)" ";
+    picture[right.location.y][right.location.x] = ' ';
+    picture[right.location.y + 1][right.location.x] = ' ';
+    picture[right.location.y + 2][right.location.x] = ' ';
 
     // ball
-    picture[ball.location.y][ball.location.x] = (char*)" ";
+    picture[ball.location.y][ball.location.x] = ' ';
 }
 
-void update(char* picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball)
+void update(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball, int& leftScore, int& rightScore)
 {
     left.move();
     right.move();
-    //ball.move();
+    ball.collision(left, right, leftScore, rightScore);
+    ball.move();
 
     // left paddle
-    picture[left.location.y][left.location.x] = (char*)"!";
-    picture[left.location.y + 1][left.location.x] = (char*)"!";
-    picture[left.location.y + 2][left.location.x] = (char*)"!";
+    picture[left.location.y][left.location.x] = '!';
+    picture[left.location.y + 1][left.location.x] = '!';
+    picture[left.location.y + 2][left.location.x] = '!';
 
     // right paddle
-    picture[right.location.y][right.location.x] = (char*)"!";
-    picture[right.location.y + 1][right.location.x] = (char*)"!";
-    picture[right.location.y + 2][right.location.x] = (char*)"!";
+    picture[right.location.y][right.location.x] = '!';
+    picture[right.location.y + 1][right.location.x] = '!';
+    picture[right.location.y + 2][right.location.x] = '!';
 
     // ball
-    //picture[ball.location.y][ball.location.x] = (char*)"█";
+    picture[ball.location.y][ball.location.x] = ACS_DIAMOND;
 }
 
-void draw(char* picture[HEIGHT][WIDTH], WINDOW* gameWindow, int leftScore, int rightScore)
+void draw(chtype picture[HEIGHT][WIDTH], WINDOW* gameWindow, int leftScore, int rightScore)
 {
     // draw game window
     clear();
@@ -109,7 +110,7 @@ void draw(char* picture[HEIGHT][WIDTH], WINDOW* gameWindow, int leftScore, int r
     {
         waddch(gameWindow, ACS_VLINE);
         for (int j = 0; j < WIDTH; j++)
-            wprintw(gameWindow, picture[i][j]);
+            waddch(gameWindow, picture[i][j]);
         waddch(gameWindow, ACS_VLINE);
         wmove(gameWindow, i + 2, 0);
     }

@@ -15,6 +15,6 @@ public:
 public:
     whoWon checkGameEnd();
     Ball(Point& newLocation, Point& newVelocity);
-    void collision(const Paddle& left, const Paddle& right);
+    void collision(const Paddle& left, const Paddle& right, int& leftScore, int& rightScore);
     void move();
 };

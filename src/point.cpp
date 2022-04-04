@@ -1,6 +1,6 @@
 #include "point.h"
 
-Point Point::operator +(const Point& a)
+Point Point::operator +(const Point& a) const
 {
     return Point(x + a.x, y + a.y);
 }

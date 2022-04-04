@@ -16,16 +16,24 @@ whoWon Ball::checkGameEnd()
     return noWin;
 }
 
-void Ball::collision(const Paddle& left, const Paddle& right)
+void Ball::collision(const Paddle& left, const Paddle& right, int& leftScore, int& rightScore)
 {
     // paddle collision
-    if (Ball::location == left.location || Ball::location == right.location)
+    // left
+    if (Ball::location == left.location  || Ball::location == left.location + Point(0, 1) || Ball::location == left.location + Point(0, 2))
     {
         Ball::velocity *= Point(-1, 1);
+        leftScore++;
+    }
+    // right
+    if (Ball::location == right.location || Ball::location == right.location + Point(0, 1) || Ball::location == right.location + Point(0, 2))
+    {
+        Ball::velocity *= Point(-1, 1);
+        rightScore++;
     }
 
     // top or bottom collision
-    if (Ball::location.y == 1 || Ball::location.y == HEIGHT - 1)
+    if (Ball::location.y == 0 || Ball::location.y == HEIGHT - 1)
     {
         Ball::velocity *= Point(1, -1);
     }
