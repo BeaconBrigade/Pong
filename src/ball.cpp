@@ -10,26 +10,36 @@ Ball::Ball(Point& newPosition, Point& newVelocity)
 whoWon Ball::checkGameEnd()
 {
     if (Ball::location.x == 0)
-        return righWin;
+        return rightWin;
     else if (Ball::location.x == WIDTH - 1)
         return leftWin;
     return noWin;
 }
 
-void Ball::collision(const Paddle& left, const Paddle& right, int& leftScore, int& rightScore)
+whoWon Ball::collision(const Paddle& left, const Paddle& right, int& leftScore, int& rightScore)
 {
     // paddle collision
     // left
-    if (Ball::location == left.location  || Ball::location == left.location + Point(0, 1) || Ball::location == left.location + Point(0, 2))
+    if (Ball::location.x == 0)
     {
-        Ball::velocity *= Point(-1, 1);
-        leftScore++;
+        if (Ball::location == left.location  || Ball::location == left.location + Point(0, 1) || Ball::location == left.location + Point(0, 2))
+        {
+            Ball::velocity *= Point(-1, 1);
+            leftScore++;
+        }
+        else
+            return rightWin;
     }
     // right
-    if (Ball::location == right.location || Ball::location == right.location + Point(0, 1) || Ball::location == right.location + Point(0, 2))
+    if (Ball::location.x == WIDTH - 1)
     {
-        Ball::velocity *= Point(-1, 1);
-        rightScore++;
+        if (Ball::location == right.location || Ball::location == right.location + Point(0, 1) || Ball::location == right.location + Point(0, 2))
+        {
+            Ball::velocity *= Point(-1, 1);
+            rightScore++;
+        }
+        else
+            return leftWin;
     }
 
     // top or bottom collision
@@ -37,6 +47,8 @@ void Ball::collision(const Paddle& left, const Paddle& right, int& leftScore, in
     {
         Ball::velocity *= Point(1, -1);
     }
+
+    return noWin;
 }
 
 void Ball::move()

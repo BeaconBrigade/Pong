@@ -1,4 +1,3 @@
-#include <iostream>
 #include <thread>
 #include <chrono>
 #include <string>
@@ -7,10 +6,10 @@
 #include "ball.h"
 #include "point.h"
 
-void update(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball, int& leftScore, int& rightScore);
+void update(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball, int& leftScore, int& rightScore, whoWon& result);
 void draw(chtype picture[HEIGHT][WIDTH], WINDOW* gameWindow, int leftScore, int rightScore);
 void blankScreen(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball);
-void listen(std::string& keyboardInput, WINDOW* gameWindow, int& length);
+void listen(std::string& keyboardInput, WINDOW* gameWindow, int& length, bool& running);
 void handleUserInput(std::string inputs, int& length, Paddle& left, Paddle& right);
 WINDOW* createGameWindow(int height, int width);
 
@@ -19,6 +18,7 @@ int main()
     bool running = true;
     std::string keyboardInput = "////";
     WINDOW* gameWindow;
+    whoWon frameResult;
     int inputLength = 4, framePassed = 0, leftScore = 0, rightScore = 0;
     chtype picture[HEIGHT][WIDTH];
     for (int i = 0; i < HEIGHT; i++)
@@ -39,7 +39,7 @@ int main()
     noecho();
     keypad(gameWindow, true);
 
-    std::thread userInput(listen, std::ref(keyboardInput), std::ref(gameWindow), std::ref(inputLength));
+    std::thread userInput(listen, std::ref(keyboardInput), std::ref(gameWindow), std::ref(inputLength), std::ref(running));
 
     // game loop
     while (running)
@@ -50,10 +50,17 @@ int main()
         blankScreen(picture, leftPaddle, rightPaddle, ball);
         handleUserInput(keyboardInput, inputLength, leftPaddle, rightPaddle);
         keyboardInput = "////";
-        update(picture, leftPaddle, rightPaddle, ball, leftScore, rightScore);
+        update(picture, leftPaddle, rightPaddle, ball, leftScore, rightScore, frameResult);
+        if (frameResult)
+            running = false;
         draw(picture, gameWindow, leftScore, rightScore);
     }
 
+    endwin();
+    if (frameResult == rightWin)
+        printf("Right side won!! Score was: %i | %i\n", leftScore, rightScore);
+    else
+        printf("Left side won!! Score was: %i | %i\n", leftScore, rightScore);
 }
 
 void blankScreen(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball)
@@ -72,11 +79,11 @@ void blankScreen(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Bal
     picture[ball.location.y][ball.location.x] = ' ';
 }
 
-void update(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball, int& leftScore, int& rightScore)
+void update(chtype picture[HEIGHT][WIDTH], Paddle& left, Paddle& right, Ball& ball, int& leftScore, int& rightScore, whoWon& result)
 {
     left.move();
     right.move();
-    ball.collision(left, right, leftScore, rightScore);
+    result = ball.collision(left, right, leftScore, rightScore);
     ball.move();
 
     // left paddle
@@ -122,15 +129,15 @@ void draw(chtype picture[HEIGHT][WIDTH], WINDOW* gameWindow, int leftScore, int 
     waddch(gameWindow, ACS_LRCORNER);
 
     // draw text
-    mvwprintw(gameWindow, HEIGHT + 2, 0, "-- %i | %i --", leftScore, rightScore);
+    mvwprintw(gameWindow, HEIGHT + 2, (WIDTH / 2) - 7, "-- %i | %i --", leftScore, rightScore);
 
     wrefresh(gameWindow);
 }
 
-void listen(std::string& keyboardInput, WINDOW* gameWindow, int& length)
+void listen(std::string& keyboardInput, WINDOW* gameWindow, int& length, bool& running)
 {
     int newChar;
-    for (int i = 0; true; i++)
+    for (int i = 0; running; i++)
     {
         if (i == 4)
         {

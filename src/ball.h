@@ -4,7 +4,7 @@
 
 enum whoWon
 {
-    noWin, leftWin, righWin
+    noWin, leftWin, rightWin
 };
 
 class Ball
@@ -15,6 +15,6 @@ public:
 public:
     whoWon checkGameEnd();
     Ball(Point& newLocation, Point& newVelocity);
-    void collision(const Paddle& left, const Paddle& right, int& leftScore, int& rightScore);
+    whoWon collision(const Paddle& left, const Paddle& right, int& leftScore, int& rightScore);
     void move();
 };
