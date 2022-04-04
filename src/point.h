@@ -4,6 +4,8 @@ const int WIDTH = 30;
 const int HEIGHT = 15;
 const int FAKEUP = 123;
 const int FAKEDOWN = 125;
+const int FPS = 4;
+const int DELAY = 1000 / FPS;
 
 struct Point
 {
