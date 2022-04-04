@@ -1,2 +1,2 @@
 language = "bash"
-run = "g++ -std=c++17 -pthread -lncurses -g src/main.cpp src/ball.cpp src/paddle.cpp src/point.cpp -o bin/linuxAsciiGame.out"
+run = "clang++ -std=c++17 -stdlib=libc++ -pthread -lncurses -g src/main.cpp src/ball.cpp src/paddle.cpp src/point.cpp -o bin/linuxAsciiGame.out -v"
