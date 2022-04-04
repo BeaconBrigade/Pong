@@ -55,6 +55,10 @@ int main()
         draw(picture, gameWindow, leftScore, rightScore);
     }
 
+    mvwprintw(gameWindow, HEIGHT + 2, (WIDTH / 2) + 8, "Press any key to end game.");
+    wrefresh(gameWindow);
+    
+    // close game
     userInput.join();
     endwin();
     if (frameResult == rightWin)
