@@ -56,6 +56,7 @@ int main()
         draw(picture, gameWindow, leftScore, rightScore);
     }
 
+    userInput.join();
     endwin();
     if (frameResult == rightWin)
         printf("Right side won!! Score was: %i | %i\n", leftScore, rightScore);
