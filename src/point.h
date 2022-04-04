@@ -1,15 +1,18 @@
 #pragma once
 
-const int WIDTH = 20;
-const int HEIGHT = 8;
-const char* const SQUARE = "█";
+const int WIDTH = 30;
+const int HEIGHT = 15;
+const int FAKEUP = 123;
+const int FAKEDOWN = 125;
+const int FPS = 4;
+const int DELAY = 1000 / FPS;
 
 struct Point
 {
 public:
     int x, y;
-
-    Point operator +(const Point&);
+public:
+    Point operator +(const Point&) const;
     void operator =(const Point&);
     void operator +=(const Point&);
     bool operator ==(const Point&);

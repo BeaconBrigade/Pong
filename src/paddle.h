@@ -6,6 +6,7 @@ class Paddle
 public:
     Point velocity;
     Point location;
+public:
     Paddle(Point location);
-    void move(char direction);
+    void move();
 };
