@@ -34,7 +34,6 @@ int main()
 
     // game window and text window
     initscr();
-    noecho();
     gameWindow = createGameWindow(HEIGHT, WIDTH);
     noecho();
     keypad(gameWindow, true);
