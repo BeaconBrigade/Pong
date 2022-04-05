@@ -17,7 +17,7 @@ public:
     void operator +=(const Point&);
     bool operator ==(const Point&);
     void operator *=(const Point&);
-
+public:
     Point(int x, int y);
     Point();
 };
