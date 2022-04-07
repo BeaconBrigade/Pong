@@ -13,7 +13,7 @@ public:
     Point velocity;
     Point location;
 public:
-    whoWon checkGameEnd();
+    whoWon checkGameEnd() const;
     Ball(Point& newLocation, Point& newVelocity);
     whoWon collision(const Paddle& left, const Paddle& right, int& leftScore, int& rightScore);
     void move();

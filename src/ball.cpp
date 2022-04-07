@@ -3,7 +3,7 @@
 
 Ball::Ball(Point& newPosition, Point& newVelocity) : location(newPosition), velocity(newVelocity) {}
 
-whoWon Ball::checkGameEnd()
+whoWon Ball::checkGameEnd() const
 {
     if (Ball::location.x == 0)
         return rightWin;
