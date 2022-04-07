@@ -18,7 +18,10 @@ void Point::operator =(const Point& a)
 }
 
 Point::Point(int newX, int newY)
-    : Point::x(newX), Point::y(newY) {}
+{
+    Point::x = newX;
+    Point::y = newY;
+}
 
 bool Point::operator ==(const Point& a)
 {
@@ -32,4 +35,7 @@ void Point::operator *=(const Point& a)
 }
 
 Point::Point()
-    : Point::x(0), Point::y(0) {}
+{
+    Point::x = 0;
+    Point::y = 0;
+}

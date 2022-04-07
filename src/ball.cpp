@@ -2,7 +2,10 @@
 #include "paddle.h"
 
 Ball::Ball(Point& newPosition, Point& newVelocity)
-    : Ball::location(newPosition), Ball::velocity(newVelocity) {}
+{
+    Ball::location = newPosition;
+    Ball::velocity = newVelocity;
+}
 
 whoWon Ball::checkGameEnd()
 {
