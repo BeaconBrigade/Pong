@@ -1,9 +1,6 @@
 #include "paddle.h"
 
-Paddle::Paddle(Point newLocation)
-{
-    Paddle::location = newLocation;
-}
+Paddle::Paddle(Point newLocation) : location(newLocation), velocity(Point(0, 0)) {}
 
 void Paddle::move()
 {
