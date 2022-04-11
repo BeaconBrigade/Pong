@@ -1,4 +1,4 @@
-# asciiGame
+# Pong
 
 Play pong in the terminal!
 
