@@ -1,10 +1,10 @@
 #pragma once
 
-const int WIDTH = 30;
-const int HEIGHT = 15;
-const int FAKEUP = 123;
-const int FAKEDOWN = 125;
-const int FPS = 6;
+const int WIDTH = 60;
+const int HEIGHT = 18;
+const int FAKEUP = '{';
+const int FAKEDOWN = '}';
+const int FPS = 16;
 const int DELAY = 1000 / FPS;
 
 struct Point
