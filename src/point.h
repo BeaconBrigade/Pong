@@ -1,6 +1,6 @@
 #pragma once
 
-const int WIDTH = 60;
+const int WIDTH = 50;
 const int HEIGHT = 18;
 const int FAKEUP = '{';
 const int FAKEDOWN = '}';
