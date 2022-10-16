@@ -1,9 +1,9 @@
 #include "paddle.h"
 
-Paddle::Paddle(Point newLocation) : location(newLocation), velocity(Point(0, 0)) {}
+Paddle::Paddle(Point newLocation)
+    : location(newLocation), velocity(Point(0, 0)) {}
 
-void Paddle::move()
-{
+void Paddle::move() {
     // up
     if (Paddle::velocity.y == -1 && Paddle::location.y > 0)
         Paddle::location += Paddle::velocity;
